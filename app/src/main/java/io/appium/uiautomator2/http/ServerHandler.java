@@ -30,13 +30,12 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpUtil;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.CACHE_CONTROL;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
-import static io.netty.handler.codec.http.HttpHeaders.Names.PRAGMA;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
@@ -55,15 +54,16 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         }
 
         FullHttpRequest request = (FullHttpRequest) msg;
-        FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK);
-        boolean keepAlive = HttpHeaders.isKeepAlive(request);
-        response.headers().set(CONNECTION, keepAlive
-                ? HttpHeaders.Values.KEEP_ALIVE
-                : HttpHeaders.Values.CLOSE);
-        response.headers().set(PRAGMA, "no-cache");
-        response.headers().set(CACHE_CONTROL, "no-store");
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
+                HttpResponseStatus.OK);
+        boolean keepAlive = HttpUtil.isKeepAlive(request);
+        response.headers().set(HttpHeaderNames.CONNECTION, keepAlive
+                ? HttpHeaderValues.KEEP_ALIVE
+                : HttpHeaderValues.CLOSE);
+        response.headers().set(HttpHeaderNames.PRAGMA, "no-cache");
+        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "no-store");
 
-        Logger.info(String.format("channel read: %s %s", request.getMethod().toString(), request.getUri()));
+        Logger.info(String.format("channel read: %s %s", request.method().toString(), request.uri()));
 
         // Check if the request URI starts with the legacy prefix, and remove it if present
         // This ensures compatibility with clients using older versions

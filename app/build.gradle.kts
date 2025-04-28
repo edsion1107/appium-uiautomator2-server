@@ -1,6 +1,5 @@
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.BuildConfigField
-import com.android.build.api.variant.TestVariant
 import com.android.build.api.variant.impl.VariantOutputImpl
 import java.io.ByteArrayOutputStream
 
@@ -19,11 +18,9 @@ plugins {
 
 java {
     // Ensures JDK 22+ Adoptium consistency across CI environments and avoids vendor-specific build issues
-    if (System.getenv("CI") != null) {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(22)
-            vendor = JvmVendorSpec.ADOPTIUM
-        }
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(22)
+        vendor = JvmVendorSpec.ADOPTIUM
     }
 }
 
@@ -33,12 +30,11 @@ val buildTime = BuildConfigField(
 )
 
 android {
-    namespace = "io.appium.uiautomator2.test"
-    compileSdk = 34
+    namespace = "io.appium.uiautomator2.server"
     defaultConfig {
-        applicationId = "io.appium.uiautomator2"
         minSdk = 21
         targetSdk = 34
+        compileSdk = 34
         versionCode = project.findProperty("versionCode").toString().toIntOrNull() ?: 1
         /**
          * versionName should be updated and inline with version in package.json for every npm release.
@@ -62,15 +58,9 @@ android {
                 include = true
             }
         }
-        create("customDebuggableBuildType") {
-            isDebuggable = true
-        }
     }
     androidComponents {
         onVariants { variant ->
-            if (variant is TestVariant) {
-                println("TestVariant: ${variant.name}")
-            }
             // Add build-time information to BuildConfig so it can be accessed at runtime.
             variant.buildConfigFields.put("BUILD_TIME", buildTime)
             variant.androidTest?.buildConfigFields?.put("BUILD_TIME", buildTime)
@@ -81,18 +71,6 @@ android {
                         it.outputFileName.get().replace("debug", "v${it.versionName.get()}")
                 }
             }
-        }
-    }
-
-    flavorDimensions += "default"
-    productFlavors {
-        create("e2eTest") {
-            applicationId = "io.appium.uiautomator2.e2etest"
-            dimension = "default"
-        }
-        create("server") {
-            applicationId = "io.appium.uiautomator2.server"
-            dimension = "default"
         }
     }
     testOptions {
@@ -130,7 +108,9 @@ android {
         abortOnError = false
     }
 }
-
+//tasks.withType<JavaCompile> {
+//    options.compilerArgs.add("-Xlint:deprecation")
+//}
 extensions.configure<de.mobilej.unmock.UnMockExtension>("unMock") {
     keepStartingWith("com.android.internal.util.")
     keepStartingWith("android.util.")
@@ -235,9 +215,9 @@ val uninstallAUT by tasks.register("uninstallAUT", Exec::class) {
 }
 
 afterEvaluate {
-    tasks.named("connectedE2eTestDebugAndroidTest").configure {
-        dependsOn(installAUT)
-    }
+//    tasks.named("connectedE2eTestDebugAndroidTest").configure {
+//        dependsOn(installAUT)
+//    }
     tasks.named("uninstallAll").configure {
         dependsOn(uninstallAUT)
     }

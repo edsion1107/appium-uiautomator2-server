@@ -40,6 +40,6 @@ public class CompressedLayoutHierarchy extends AbstractSetting<Boolean> {
     @Override
     protected void apply(Boolean compressLayout) {
         compressedLayoutHierarchy = compressLayout;
-        Device.getUiDevice().setCompressedLayoutHeirarchy(compressLayout);
+        Device.getUiDevice().setCompressedLayoutHierarchy(compressLayout);
     }
 }

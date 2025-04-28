@@ -32,7 +32,6 @@ import androidx.test.uiautomator.Configurator;
 import io.appium.uiautomator2.model.settings.Settings;
 import io.appium.uiautomator2.model.settings.ShutdownOnPowerDisconnect;
 import io.appium.uiautomator2.server.mjpeg.MjpegScreenshotServer;
-import io.appium.uiautomator2.test.BuildConfig;
 import io.appium.uiautomator2.utils.Logger;
 
 import static android.content.Intent.ACTION_POWER_DISCONNECTED;
@@ -89,6 +88,7 @@ public class ServerInstrumentation {
                 : wakeLockAcquireTimestampMs + wakeLockTimeoutMs - SystemClock.elapsedRealtime();
     }
 
+    @SuppressWarnings("deprecation")
     public void acquireWakeLock(long msTimeout) {
         Logger.debug(String.format(
                 "Got request to acquire a new wake lock with %sms timeout", msTimeout));
