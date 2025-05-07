@@ -1,6 +1,4 @@
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
-import com.android.build.api.variant.BuildConfigField
-import com.android.build.api.variant.impl.VariantOutputImpl
 import java.io.ByteArrayOutputStream
 
 buildscript {
@@ -14,69 +12,18 @@ buildscript {
 apply(plugin = "de.mobilej.unmock")
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.appium.uiautomator2.convention)
+//    id("project-report")
 }
 
-java {
-    // Ensures JDK 22+ Adoptium consistency across CI environments and avoids vendor-specific build issues
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(22)
-        vendor = JvmVendorSpec.ADOPTIUM
-    }
+base {
+    archivesName = "appium-uiautomator2"
 }
-
-project.base.archivesName = "appium-uiautomator2"
-val buildTime = BuildConfigField(
-    "String", "\"${System.currentTimeMillis()}\"", "build timestamp"
-)
 
 android {
     namespace = "io.appium.uiautomator2.server"
-    defaultConfig {
-        minSdk = 21
-        targetSdk = 34
-        compileSdk = 34
-        versionCode = project.findProperty("versionCode").toString().toIntOrNull() ?: 1
-        /**
-         * versionName should be updated and inline with version in package.json for every npm release.
-         */
-        versionName = project.findProperty("versionName")?.toString() ?: "1.0.0-SNAPSHOT"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testOptions {
-            testInstrumentationRunnerArguments += mapOf(
-                "notAnnotation" to "androidx.test.filters.FlakyTest"
-            )
-        }
-        buildFeatures {
-            buildConfig = true
-        }
-
-    }
-    buildTypes {
-        getByName("debug") {
-            isDebuggable = true
-            vcsInfo {
-                include = true
-            }
-        }
-    }
-    androidComponents {
-        onVariants { variant ->
-            // Add build-time information to BuildConfig so it can be accessed at runtime.
-            variant.buildConfigFields.put("BUILD_TIME", buildTime)
-            variant.androidTest?.buildConfigFields?.put("BUILD_TIME", buildTime)
-
-            variant.outputs.forEach {
-                if (it is VariantOutputImpl) {
-                    it.outputFileName =
-                        it.outputFileName.get().replace("debug", "v${it.versionName.get()}")
-                }
-            }
-        }
-    }
     testOptions {
         unitTests {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
             all {
                 it.jvmArgs(
                     listOf(
@@ -168,18 +115,18 @@ val installAUT by tasks.register("installAUT", Exec::class) {
             commandArgs.add(targetSerial)
             logger.quiet("Installing to device: $targetSerial")
         }
-        val apiLevel : Int = runCatching {
+        val apiLevel: Int = runCatching {
             val getPropCommand = mutableListOf<String>()
             getPropCommand.addFirst(adbFileProvider.get().asFile.absolutePath)
             getPropCommand.addAll(commandArgs)
-            getPropCommand.addAll(listOf("shell","getprop","ro.build.version.sdk"))
-            ProcessBuilder( getPropCommand)
+            getPropCommand.addAll(listOf("shell", "getprop", "ro.build.version.sdk"))
+            ProcessBuilder(getPropCommand)
                 .start()
                 .inputStream.bufferedReader().use { it.readText() }.trim().toIntOrNull()
-        }.getOrNull()?:23
+        }.getOrNull() ?: 23
 
         commandArgs.add("install")
-        if (apiLevel >= 23){
+        if (apiLevel >= 23) {
             commandArgs.add("-g")
         }
         commandArgs.add("-r")
@@ -221,4 +168,5 @@ afterEvaluate {
     tasks.named("uninstallAll").configure {
         dependsOn(uninstallAUT)
     }
+
 }

@@ -1,5 +1,7 @@
 [versions]
-androidGradlePlugin = "8.9.1"
+kotlinGradlePlugin = "2.1.20"
+androidGradlePlugin = "8.9.2"
+androidTools = "31.9.2"
 gson = "2.13.0"
 icu4j = "60.2"
 javaCupRuntime = "11b-20160615-3"
@@ -36,15 +38,24 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 unmockplugin = { module = "com.github.bjoernq:unmockplugin", version.ref = "unmockplugin" }
 uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
-androidx-test-junit = {module = "androidx.test.ext:junit",version.ref = "androidx-test-junit"}
-androidx-test-runner = {module = "androidx.test:runner", version.ref = "androidx-test-runner"}
+androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-junit" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 xercesimpl = { module = "xerces:xercesImpl", version.ref = "xercesimpl" }
 
+# Dependencies of the included build-logic
+kotlinAndroid-gradlePlugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "kotlinGradlePlugin" }
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
+android-tools-common = { module = "com.android.tools:common", version.ref = "androidTools" }
+
 [bundles]
-androix-test = ["androidx-test-core","androidx-test-junit","androidx-test-runner"]
-powermock = ["powermock-api-mockito2","powermock-classloading-xstream","powermock-module-junit4","powermock-module-junit4-rule"]
+androix-test = ["androidx-test-core", "androidx-test-junit", "androidx-test-runner"]
+powermock = ["powermock-api-mockito2", "powermock-classloading-xstream", "powermock-module-junit4", "powermock-module-junit4-rule"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinGradlePlugin" }
 unmockplugin = { id = "de.mobilej.unmock", version.ref = "unmockplugin" }
+
+# Plugins defined by this project
+appium-uiautomator2-convention = {id ="AndroidConventionPlugin"}

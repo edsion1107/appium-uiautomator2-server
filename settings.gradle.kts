@@ -1,24 +1,6 @@
-pluginManagement {
-    repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-        google()
-    }
-}
+apply(from = "./gradle/settings/convention.settings.gradle.kts")
 rootProject.name = "appium-uiautomator2-server"
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+includeBuild("build-logic")
 include(":app")
 include(":e2etest")
