@@ -64,14 +64,14 @@ public class CompressedLayoutHierarchyTests {
     @Test
     public void shouldBeAbleToEnableCompressedLayout() {
         compressedLayoutHierarchy.update(true);
-        verify(uiDevice).setCompressedLayoutHeirarchy(true);
+        verify(uiDevice).setCompressedLayoutHierarchy(true);
         Assert.assertEquals(true, compressedLayoutHierarchy.getValue());
     }
 
     @Test
     public void shouldBeAbleToDisableCompressedLayout() {
         compressedLayoutHierarchy.update(false);
-        verify(uiDevice).setCompressedLayoutHeirarchy(false);
+        verify(uiDevice).setCompressedLayoutHierarchy(false);
         Assert.assertEquals(false, compressedLayoutHierarchy.getValue());
     }
 }
