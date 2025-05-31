@@ -46,6 +46,7 @@ xercesimpl = { module = "xerces:xercesImpl", version.ref = "xercesimpl" }
 kotlinAndroid-gradlePlugin = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "kotlinGradlePlugin" }
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
 android-tools-common = { module = "com.android.tools:common", version.ref = "androidTools" }
+ddmlib = { module = "com.android.tools.ddms:ddmlib", version.ref = "androidTools" }
 
 [bundles]
 androix-test = ["androidx-test-core", "androidx-test-junit", "androidx-test-runner"]
@@ -56,6 +57,8 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinGradlePlugin" }
 unmockplugin = { id = "de.mobilej.unmock", version.ref = "unmockplugin" }
+project-report = { id = "project-report" }
 
 # Plugins defined by this project
-appium-uiautomator2-convention = {id ="AndroidConventionPlugin"}
+appium-uiautomator2-convention = { id = "AndroidConventionPlugin" }
+adb-plugin = { id = "ADBPlugin" }

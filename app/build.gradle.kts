@@ -13,7 +13,7 @@ apply(plugin = "de.mobilej.unmock")
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.appium.uiautomator2.convention)
-//    id("project-report")
+    alias(libs.plugins.project.report)
 }
 
 base {
@@ -87,86 +87,4 @@ dependencies {
     // Android test dependencies
     androidTestImplementation(libs.junit)
     androidTestImplementation(libs.okhttp)
-}
-
-val installAUT by tasks.register("installAUT", Exec::class) {
-    group = "install"
-    description = "Install app under test (ApiDemos) using AGP's ADB."
-    val extension = project.extensions.getByType(ApplicationAndroidComponentsExtension::class.java)
-    // To avoid issues caused by incorrect configuration of the ANDROID_HOME environment variable
-    // or version inconsistencies from multiple adb installations.
-    val adbFileProvider: Provider<RegularFile> = extension.sdkComponents.adb
-    val apkFile = project.file("../node_modules/android-apidemos/apks/ApiDemos-debug.apk")
-    val targetSerial = System.getenv("ANDROID_SERIAL")
-    inputs.file(apkFile)
-        .withPathSensitivity(PathSensitivity.ABSOLUTE)
-        .withPropertyName("autApkInput")
-        .skipWhenEmpty(false)
-
-    doFirst {
-        if (!apkFile.exists()) {
-            throw GradleException("Required AUT APK not found at: ${apkFile.absolutePath}")
-        }
-        executable = adbFileProvider.get().asFile.absolutePath
-        val commandArgs = mutableListOf<String>()
-
-        if (!targetSerial.isNullOrBlank()) {
-            commandArgs.add("-s")
-            commandArgs.add(targetSerial)
-            logger.quiet("Installing to device: $targetSerial")
-        }
-        val apiLevel: Int = runCatching {
-            val getPropCommand = mutableListOf<String>()
-            getPropCommand.addFirst(adbFileProvider.get().asFile.absolutePath)
-            getPropCommand.addAll(commandArgs)
-            getPropCommand.addAll(listOf("shell", "getprop", "ro.build.version.sdk"))
-            ProcessBuilder(getPropCommand)
-                .start()
-                .inputStream.bufferedReader().use { it.readText() }.trim().toIntOrNull()
-        }.getOrNull() ?: 23
-
-        commandArgs.add("install")
-        if (apiLevel >= 23) {
-            commandArgs.add("-g")
-        }
-        commandArgs.add("-r")
-        commandArgs.addLast(apkFile.absolutePath)
-        setArgs(commandArgs)
-        isIgnoreExitValue = false
-        errorOutput = ByteArrayOutputStream()
-        standardOutput = ByteArrayOutputStream()
-    }
-
-    doLast {
-        logger.info("exitValue: ${executionResult.get().exitValue},\nstandardOutput: $standardOutput,\nerrorOutput: $errorOutput")
-    }
-}
-val uninstallAUT by tasks.register("uninstallAUT", Exec::class) {
-    group = "install"
-    description = "Uninstall app under test (ApiDemos) using AGP's ADB."
-    val extension = project.extensions.getByType(ApplicationAndroidComponentsExtension::class.java)
-    val adbFileProvider: Provider<RegularFile> = extension.sdkComponents.adb
-    val targetSerial = System.getenv("ANDROID_SERIAL")
-    doFirst {
-        executable = adbFileProvider.get().asFile.absolutePath
-        val commandArgs = mutableListOf<String>()
-        if (!targetSerial.isNullOrBlank()) {
-            commandArgs.add("-s")
-            commandArgs.add(targetSerial)
-            logger.quiet("Uninstalling to device: $targetSerial")
-        }
-        commandArgs.addAll(listOf("uninstall", "io.appium.android.apis"))
-        setArgs(commandArgs)
-        isIgnoreExitValue = true
-    }
-}
-
-afterEvaluate {
-//    tasks.named("connectedE2eTestDebugAndroidTest").configure {
-//        dependsOn(installAUT)
-//    }
-    tasks.named("uninstallAll").configure {
-        dependsOn(uninstallAUT)
-    }
-
 }
