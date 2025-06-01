@@ -41,6 +41,10 @@ import static io.appium.uiautomator2.utils.Device.getUiDevice;
 
 import com.google.gson.Gson;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class ServerInstrumentation {

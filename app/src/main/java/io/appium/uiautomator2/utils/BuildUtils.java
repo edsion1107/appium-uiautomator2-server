@@ -21,8 +21,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.appium.uiautomator2.test.BuildConfig;
-
+import io.appium.uiautomator2.server.BuildConfig;
 public class BuildUtils {
     private static Map<String, Object> cachedBuildConfig;
 
