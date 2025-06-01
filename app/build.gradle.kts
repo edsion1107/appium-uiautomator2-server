@@ -1,6 +1,3 @@
-import com.android.build.api.variant.ApplicationAndroidComponentsExtension
-import java.io.ByteArrayOutputStream
-
 buildscript {
     dependencies {
         classpath(libs.unmockplugin) {
@@ -17,7 +14,7 @@ plugins {
 }
 
 base {
-    archivesName = "appium-uiautomator2"
+    archivesName = "appium-uiautomator2-server"
 }
 
 android {

@@ -3,7 +3,7 @@
 classes=(AlertCommandsTest ActionsCommandsTest ElementCommandsTest DeviceCommandsTest)
 did_fail=0
 for cls_name in "${classes[@]}"; do
-  if ! ./gradlew connectedE2eTestDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.appium.uiautomator2.unittest.test.$cls_name; then
+  if ! ./gradlew e2etest:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=io.appium.uiautomator2.unittest.test.$cls_name; then
     did_fail=1
   fi
 done

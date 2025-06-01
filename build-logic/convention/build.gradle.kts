@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     compileOnly(libs.android.tools.common)
-    compileOnly(libs.ddmlib)
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlinAndroid.gradlePlugin)
 //    compileOnly(libs.kotlin.gradlePlugin)
@@ -31,10 +30,6 @@ gradlePlugin {
         register("AndroidConventionPlugin") {
             id = "AndroidConventionPlugin"
             implementationClass = "io.appium.uiautomator2.convention.AndroidConventionPlugin"
-        }
-        register("ADBPlugin") {
-            id = "ADBPlugin"
-            implementationClass = "io.appium.uiautomator2.convention.ADBPlugin"
         }
     }
 }
