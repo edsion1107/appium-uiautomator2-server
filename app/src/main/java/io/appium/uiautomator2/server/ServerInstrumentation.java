@@ -32,6 +32,7 @@ import androidx.test.uiautomator.Configurator;
 import io.appium.uiautomator2.model.settings.Settings;
 import io.appium.uiautomator2.model.settings.ShutdownOnPowerDisconnect;
 import io.appium.uiautomator2.server.mjpeg.MjpegScreenshotServer;
+import io.appium.uiautomator2.utils.BuildUtils;
 import io.appium.uiautomator2.utils.Logger;
 
 import static android.content.Intent.ACTION_POWER_DISCONNECTED;
@@ -40,10 +41,6 @@ import static io.appium.uiautomator2.utils.Device.getUiDevice;
 
 import com.google.gson.Gson;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class ServerInstrumentation {
@@ -88,7 +85,6 @@ public class ServerInstrumentation {
                 : wakeLockAcquireTimestampMs + wakeLockTimeoutMs - SystemClock.elapsedRealtime();
     }
 
-    @SuppressWarnings("deprecation")
     public void acquireWakeLock(long msTimeout) {
         Logger.debug(String.format(
                 "Got request to acquire a new wake lock with %sms timeout", msTimeout));
@@ -149,7 +145,7 @@ public class ServerInstrumentation {
             }
 
             Logger.info("Starting ServerInstrumentation");
-            Logger.info("buildConfig: ",new Gson().toJson(getBuildConfig()));
+            Logger.info(String.format("buildConfig: %s", new Gson().toJson(BuildUtils.getBuildConfig())));
             shutdownLatch = new CountDownLatch(1);
             acquireWakeLock(MAX_TEST_DURATION);
             startHttpServer();
